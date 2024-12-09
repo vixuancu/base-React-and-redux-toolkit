@@ -1,5 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
+// First, create the thunk
+export const fetchAllUsers = createAsyncThunk(
+  "users/fetchAllUsers",
+  async () => {
+    let res = await axios.get("http://localhost:8080/users/all");
+    return res.data;
+  }
+);
 const initialState = {
   value: 0,
 };
@@ -21,6 +30,22 @@ export const counterSlice = createSlice({
     incrementByAmount: (state, action) => {
       state.value += action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    // Add reducers for additional action types here, and handle loading state as needed
+    builder
+      .addCase(fetchAllUsers.pending, (state, action) => {
+        // Add user to the state array
+        state.entities.push(action.payload);
+      })
+      .addCase(fetchAllUsers.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.entities.push(action.payload);
+      })
+      .addCase(fetchAllUsers.rejected, (state, action) => {
+        // Add user to the state array
+        state.entities.push(action.payload);
+      });
   },
 });
 
